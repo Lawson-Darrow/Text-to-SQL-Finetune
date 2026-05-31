@@ -23,7 +23,16 @@ Spider (NL + schema → SQL) → LoRA/QLoRA SFT (unsloth) on 1.5B/3B/7B
 
 ## Status
 
-Milestone 1 — scaffold. See [SPEC.md](SPEC.md) for the plan and milestones.
+Milestone 3 — data + official evaluator wired; base-model baseline measured before any
+training. Base Qwen2.5-Coder-1.5B (zero-shot, `with_keys` schema, 50 dev questions):
+**execution accuracy 0.64**, exact-match ~0.44, via the official `test-suite-sql-eval`.
+Stack derisk (M2) passed on the RTX 4090 / WSL2. See [SPEC.md](SPEC.md) for milestones.
+
+```bash
+# in WSL2: data + evaluator setup, then a baseline run
+bash scripts/prepare_data.sh
+PYTHONPATH=src python scripts/run_baseline.py --n 50 --schema-style with_keys
+```
 
 ## Setup (planned)
 

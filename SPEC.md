@@ -72,7 +72,9 @@ The headline is an ablation across three axes, not just a size curve:
    one forward pass, one **LoRA bf16 backward** pass, one generation, one eval query against
    the Spider evaluator; QLoRA 4-bit load. On WSL2 / the 4090.
 3. **Data + eval harness** — Spider load, schema serialization (v1 format), wire the
-   **official evaluator** first (before training), with the metric suite above.
+   **official evaluator** first (before training), with the metric suite above. ✅ done
+   (self-consistent Spider package: 166 DBs + tables.json + dev gold; official
+   test-suite-sql-eval wired; base 1.5B baseline = 0.64 exec acc on 50 dev q).
 4. **Schema-representation ablation** — prompt-only / few-shot, varying schema formats, on the base 7B.
 5. **Fine-tune** — LoRA bf16 SFT; compare to base + frontier on the full metric suite.
 6. **Size ladder** — 1.5B/3B/7B × best schema format; the 3-axis result + CIs + per-hardness.
