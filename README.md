@@ -23,15 +23,28 @@ Spider (NL + schema → SQL) → LoRA/QLoRA SFT (unsloth) on 1.5B/3B/7B
 
 ## Status
 
-Milestone 3 — data + official evaluator wired; base-model baseline measured before any
-training. Base Qwen2.5-Coder-1.5B (zero-shot, `with_keys` schema, 50 dev questions):
-**execution accuracy 0.64**, exact-match ~0.44, via the official `test-suite-sql-eval`.
-Stack derisk (M2) passed on the RTX 4090 / WSL2. See [SPEC.md](SPEC.md) for milestones.
+Milestone 4 — schema-representation ablation (the high-signal axis), base models, no fine-tuning yet.
+
+![Schema representation x model size](results/schema_ablation_combined.png)
+
+Spider dev (n=100), official `test-suite-sql-eval`, execution accuracy:
+
+| schema style | 1.5B | 7B |
+|---|---|---|
+| minimal | 0.57 | 0.91 |
+| with_types | 0.55 | 0.86 |
+| with_keys | 0.60 | 0.91 |
+
+Findings: **(1) model size dominates** (7B ≈0.91 vs 1.5B ≈0.58). **(2) Adding column types
+consistently *hurt* execution** at both sizes. **(3) PK/FK keys** gave the best exact-match
+(7B 0.68) and tied best execution. `minimal` already reaches ~0.91 on 7B. Stack derisk (M2)
+passed on the RTX 4090 / WSL2; evaluator wired in M3. See [SPEC.md](SPEC.md) for milestones.
 
 ```bash
-# in WSL2: data + evaluator setup, then a baseline run
+# in WSL2: data + evaluator setup, then baseline / ablation
 bash scripts/prepare_data.sh
-PYTHONPATH=src python scripts/run_baseline.py --n 50 --schema-style with_keys
+PYTHONPATH=src python scripts/run_ablation.py --n 100 --model Qwen/Qwen2.5-Coder-7B-Instruct
+PYTHONPATH=src python scripts/plot_ablation.py
 ```
 
 ## Setup (planned)

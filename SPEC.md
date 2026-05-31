@@ -75,7 +75,9 @@ The headline is an ablation across three axes, not just a size curve:
    **official evaluator** first (before training), with the metric suite above. ✅ done
    (self-consistent Spider package: 166 DBs + tables.json + dev gold; official
    test-suite-sql-eval wired; base 1.5B baseline = 0.64 exec acc on 50 dev q).
-4. **Schema-representation ablation** — prompt-only / few-shot, varying schema formats, on the base 7B.
+4. **Schema-representation ablation** — varying schema formats on base models. ✅ done
+   (1.5B + 7B × {minimal, with_types, with_keys}, n=100; size dominates, with_types hurt,
+   PK/FK keys best exact-match; chart in `results/schema_ablation_combined.png`).
 5. **Fine-tune** — LoRA bf16 SFT; compare to base + frontier on the full metric suite.
 6. **Size ladder** — 1.5B/3B/7B × best schema format; the 3-axis result + CIs + per-hardness.
 7. **Writeup** — report (+ contamination caveat + held-out set), blog, featured project.
