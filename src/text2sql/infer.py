@@ -14,12 +14,16 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from text2sql.data import SYSTEM
 
 
-def load_model(name: str, dtype=torch.bfloat16, device: str = "cuda"):
+def load_model(name: str, dtype=torch.bfloat16, device: str = "cuda", adapter_path: str | None = None):
     tok = AutoTokenizer.from_pretrained(name)
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
     tok.padding_side = "left"  # decoder-only generation needs left padding
     model = AutoModelForCausalLM.from_pretrained(name, dtype=dtype, device_map=device)
+    if adapter_path:
+        from peft import PeftModel
+
+        model = PeftModel.from_pretrained(model, adapter_path)
     model.eval()
     return model, tok
 
