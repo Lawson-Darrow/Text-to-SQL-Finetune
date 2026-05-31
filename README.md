@@ -23,7 +23,21 @@ Spider (NL + schema → SQL) → LoRA/QLoRA SFT (unsloth) on 1.5B/3B/7B
 
 ## Status
 
-Milestone 4 — schema-representation ablation (the high-signal axis), base models, no fine-tuning yet.
+Milestone 5 — LoRA fine-tune (1.5B, 1 epoch on Spider train). Base vs fine-tuned, dev n=100:
+
+![LoRA SFT base vs fine-tuned](results/finetune_compare.png)
+
+| metric | base | fine-tuned | Δ |
+|---|---|---|---|
+| exact-match | 0.28 | 0.45 | +0.17 |
+| execution | 0.60 | 0.57 | −0.03 (within n=100 noise) |
+
+Finding: SFT taught the model Spider's gold SQL *style* (exact-match +17 pts) but execution
+accuracy was flat — **exact-match and execution measure different things; matching gold style
+≠ better functional correctness.** A definitive execution comparison (full dev + bootstrap CIs)
+comes with the size ladder (M6).
+
+### Milestone 4 — schema-representation ablation
 
 ![Schema representation x model size](results/schema_ablation_combined.png)
 

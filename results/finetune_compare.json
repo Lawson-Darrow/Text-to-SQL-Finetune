@@ -1,0 +1,9 @@
+{
+  "model": "Qwen2.5-Coder-1.5B-Instruct",
+  "schema_style": "with_keys",
+  "n": 100,
+  "epochs": 1,
+  "note": "Execution delta (-0.03 on n=100) is within noise; full-dev + bootstrap CIs in the final eval (Codex's statistical-rigor point).",
+  "base": {"execution": 0.60, "exact_match": 0.28},
+  "finetuned": {"execution": 0.57, "exact_match": 0.45}
+}

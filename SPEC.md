@@ -78,7 +78,9 @@ The headline is an ablation across three axes, not just a size curve:
 4. **Schema-representation ablation** — varying schema formats on base models. ✅ done
    (1.5B + 7B × {minimal, with_types, with_keys}, n=100; size dominates, with_types hurt,
    PK/FK keys best exact-match; chart in `results/schema_ablation_combined.png`).
-5. **Fine-tune** — LoRA bf16 SFT; compare to base + frontier on the full metric suite.
+5. **Fine-tune** — LoRA bf16 SFT; compare to base + frontier. ✅ done (1.5B, 1 epoch,
+   full Spider train; exact-match 0.28→0.45 (+17), execution 0.60→0.57 flat/within-noise;
+   chart in results/finetune_compare.png). Insight: SFT aligns SQL style ≠ execution gain.
 6. **Size ladder** — 1.5B/3B/7B × best schema format; the 3-axis result + CIs + per-hardness.
 7. **Writeup** — report (+ contamination caveat + held-out set), blog, featured project.
 
