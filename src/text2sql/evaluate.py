@@ -7,9 +7,44 @@ has too many pitfalls. We write gold/pred files in the evaluator's format and sh
 
 from __future__ import annotations
 
+import random
 import re
 import subprocess
+import sys
 from pathlib import Path
+
+
+def per_example_execution(
+    preds: list[str],
+    gold_pairs: list[tuple[str, str]],
+    db_dir: str | Path,
+    evaluator_dir: str | Path,
+) -> list[bool]:
+    """Per-example execution correctness via the official `eval_exec_match` (so CIs can be
+    bootstrapped). Returns one bool per example."""
+    sys.path.insert(0, str(evaluator_dir))
+    from exec_eval import eval_exec_match  # noqa: E402
+
+    out: list[bool] = []
+    for pred, (gold, db_id) in zip(preds, gold_pairs):
+        db = str(Path(db_dir) / db_id / f"{db_id}.sqlite")
+        try:
+            ok = eval_exec_match(db, pred or "SELECT 1", gold, False, False, False)
+        except Exception:  # noqa: BLE001
+            ok = 0
+        out.append(bool(ok))
+    return out
+
+
+def bootstrap_ci(flags: list[bool], n_boot: int = 1000, seed: int = 0) -> tuple[float, float, float]:
+    """(mean, lo95, hi95) accuracy with a percentile bootstrap CI."""
+    n = len(flags)
+    if n == 0:
+        return (0.0, 0.0, 0.0)
+    rng = random.Random(seed)
+    mean = sum(flags) / n
+    boots = sorted(sum(flags[rng.randrange(n)] for _ in range(n)) / n for _ in range(n_boot))
+    return (mean, boots[int(0.025 * n_boot)], boots[int(0.975 * n_boot)])
 
 
 def write_eval_files(gold_pairs: list[tuple[str, str]], preds: list[str], work_dir: str | Path):

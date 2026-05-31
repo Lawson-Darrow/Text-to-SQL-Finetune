@@ -1,0 +1,53 @@
+{
+  "schema_style": "with_keys",
+  "rows": [
+    {
+      "label": "1.5B base",
+      "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+      "size": 1.5,
+      "ft": false,
+      "exec": 0.558,
+      "ci95": [
+        0.5271,
+        0.587
+      ],
+      "n": 1034
+    },
+    {
+      "label": "3B base",
+      "model": "Qwen/Qwen2.5-Coder-3B-Instruct",
+      "size": 3.0,
+      "ft": false,
+      "exec": 0.6915,
+      "ci95": [
+        0.6644,
+        0.7215
+      ],
+      "n": 1034
+    },
+    {
+      "label": "7B base",
+      "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+      "size": 7.0,
+      "ft": false,
+      "exec": 0.793,
+      "ci95": [
+        0.766,
+        0.8172
+      ],
+      "n": 1034
+    },
+    {
+      "label": "1.5B FT",
+      "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+      "size": 1.5,
+      "ft": true,
+      "exec": 0.6286,
+      "ci95": [
+        0.5986,
+        0.6586
+      ],
+      "n": 1034
+    }
+  ]
+}
