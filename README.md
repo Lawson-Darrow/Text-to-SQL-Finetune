@@ -1,11 +1,12 @@
 # Text-to-SQL Fine-Tune
 
-Fine-tuning small open **Qwen2.5-Coder** models (1.5B / 3B / 7B) for natural-language →
-SQL, evaluated by **execution accuracy** (run the query, check the rows), and compared
-across a size ladder against a frontier baseline.
+Fine-tuning small open **Qwen2.5-Coder** models for natural-language → SQL, evaluated
+with the **official Spider / test-suite evaluator**, to answer: **what actually moves
+accuracy on small text-to-SQL models — model size, fine-tuning, or how you represent the
+schema?**
 
-The question: *how small an open model can you fine-tune before it matches a frontier
-model on text-to-SQL — and what does that cost?*
+Three ablation axes: schema representation, fine-tuning (base/few-shot/LoRA), and model
+size (1.5B/3B/7B). The size ladder is one axis, not the whole thesis.
 
 Project #2 of an LLM/NLP arc. Project #1 — the
 [Biomedical RAG Agent](https://github.com/Lawson-Darrow/Biomedical-RAG-Agent) — was about
