@@ -12,16 +12,22 @@ mkdir -p "$WORK"; cd "$WORK"
 echo "=== [0] nvidia-smi ==="
 nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader || true
 
-echo "=== venv (python3.12) ==="
-[ -d .venv ] || python3.12 -m venv .venv
+echo "=== ensure uv (OSS python manager; no sudo/apt, ships its own venv+pip) ==="
+if ! command -v uv >/dev/null 2>&1; then
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+command -v uv >/dev/null 2>&1 || { echo "uv unavailable"; exit 1; }
+
+echo "=== venv via uv (python 3.12) ==="
+uv venv .venv --python 3.12 --clear
 . .venv/bin/activate
-python -m pip install -q --upgrade pip
 
 echo "=== install torch (CUDA 12.4 build) ==="
-pip install -q torch --index-url https://download.pytorch.org/whl/cu124
+uv pip install torch --index-url https://download.pytorch.org/whl/cu124
 
 echo "=== install HF stack ==="
-pip install -q transformers peft trl accelerate datasets
+uv pip install transformers peft trl accelerate datasets
 
 echo "=== [1] torch GPU check ==="
 python - <<'PY'
