@@ -6,6 +6,7 @@ Run: PYTHONPATH=src python scripts/plot_ladder.py
 from __future__ import annotations
 
 import json
+import os
 
 import matplotlib
 
@@ -14,6 +15,9 @@ import matplotlib.pyplot as plt
 
 d = json.loads(open("results/ladder.json").read())
 rows = d["rows"]
+frontier = []
+if os.path.exists("results/frontier.json"):
+    frontier = json.loads(open("results/frontier.json").read())["rows"]
 base = sorted((r for r in rows if not r["ft"]), key=lambda r: r["size"])
 ft = [r for r in rows if r["ft"]]
 
@@ -35,6 +39,12 @@ if ft:
     plt.errorbar(fx, fy, yerr=err(ft), marker="s", linestyle="none", capsize=4, color="#e8590c", label="fine-tuned (LoRA)")
     for r in ft:
         plt.annotate(f"{r['exec']:.2f}", (r["size"], r["exec"]), textcoords="offset points", xytext=(6, -14), fontsize=8, color="#e8590c")
+
+# Frontier models as horizontal reference lines (no meaningful x-position).
+fcolors = ["#2f9e44", "#9c36b5", "#1098ad"]
+for i, r in enumerate(frontier):
+    plt.axhline(r["exec"], color=fcolors[i % len(fcolors)], linestyle="--", linewidth=1.2,
+                label=f"{r['label']} (frontier) {r['exec']:.2f}")
 
 plt.xscale("log")
 plt.xticks(xs, [str(s) for s in xs])

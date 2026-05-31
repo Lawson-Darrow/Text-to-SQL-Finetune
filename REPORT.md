@@ -9,6 +9,9 @@ check the rows), reporting bootstrap confidence intervals on the headline number
 
 - **Model size is the dominant lever.** Base execution accuracy on Spider dev (n=1034):
   **1.5B 0.56 → 3B 0.69 → 7B 0.79**, all CIs non-overlapping.
+- **Open matches frontier.** The open **7B (0.79)** is statistically tied with
+  **Claude-haiku-4-5 (0.79)** and within noise of **GPT-4.1-mini (0.81)** — a model you can
+  run on your own 24GB GPU reaches frontier-tier execution accuracy on this task.
 - **LoRA fine-tuning a 1.5B gives a real, significant lift: 0.56 → 0.63 (+7 pts)** — the
   fine-tuned 1.5B closes **~half the gap to a 2×-larger 3B base**. The efficiency story.
 - **Schema representation matters less but consistently:** adding column *types* hurt
@@ -37,19 +40,24 @@ fine-tuning, and how the database schema is serialized into the prompt.
 
 ## Results
 
-### Size + fine-tuning (full dev, n=1034, execution accuracy, 95% CI)
+### Size, fine-tuning, and frontier (full dev, n=1034, execution accuracy, 95% CI)
 
 ![accuracy vs size](results/ladder.png)
 
-| config | execution acc | 95% CI |
-|---|---|---|
-| 1.5B base | 0.558 | [0.527, 0.587] |
-| 3B base | 0.691 | [0.664, 0.721] |
-| 7B base | 0.793 | [0.766, 0.817] |
-| **1.5B fine-tuned** | **0.629** | [0.599, 0.659] |
+| config | tier | execution acc | 95% CI |
+|---|---|---|---|
+| 1.5B base | open | 0.558 | [0.527, 0.587] |
+| 1.5B fine-tuned | open | 0.629 | [0.599, 0.659] |
+| 3B base | open | 0.691 | [0.664, 0.721] |
+| **7B base** | open | **0.793** | [0.766, 0.817] |
+| claude-haiku-4-5 | frontier | 0.794 | [0.768, 0.819] |
+| gpt-4.1-mini | frontier | 0.811 | [0.787, 0.836] |
 
-Size scales cleanly and significantly. Fine-tuning the 1.5B lifts it +7 points into the
-gap between 1.5B and 3B base — you get roughly half a "size step" from a one-epoch LoRA.
+Size scales cleanly and significantly. Fine-tuning the 1.5B lifts it +7 points into the gap
+between 1.5B and 3B base — roughly half a "size step" from a one-epoch LoRA. And the **open
+7B (0.79) is statistically tied with the frontier models** (Claude-haiku 0.79, GPT-4.1-mini
+0.81 — CIs overlap): frontier-tier text-to-SQL runs locally. Frontier was evaluated through
+the same prompt, schema format, decoding, and official evaluator for a fair comparison.
 
 ### Schema representation (n=100, execution accuracy)
 
@@ -79,7 +87,8 @@ slice — would have told the wrong story.
 - Fine-tuned only the 1.5B; 3B/7B fine-tunes (and a fine-tuned size ladder) are future work.
 - **Contamination caveat:** Qwen2.5-Coder may have seen Spider in pretraining; treat
   absolute numbers as in-distribution. A held-out unseen-schema set would harden this.
-- Frontier-model comparison (matched prompts/decoding) not included in v1.
+- Frontier comparison uses the mid-tier `gpt-4.1-mini` / `claude-haiku-4-5` (the
+  plan-available models), not the largest flagships — so "matches frontier" means this tier.
 
 ## Reproduce
 
@@ -95,5 +104,5 @@ Trained on a single RTX 4090 (24GB) under WSL2; env via `uv`. See `docs/stack_de
 
 ## What I'd do next
 
-Fine-tune the full size ladder; add a frontier baseline (matched); a held-out unseen-schema
+Fine-tune the full size ladder; add larger frontier flagships; a held-out unseen-schema
 set for contamination; schema ablation at full dev with CIs; and the harder BIRD benchmark.

@@ -29,21 +29,25 @@ Full writeup: **[REPORT.md](REPORT.md)**. Narrative version: [blog post](docs/bl
 
 ![accuracy vs size](results/ladder.png)
 
-| config | execution acc | 95% CI |
-|---|---|---|
-| 1.5B base | 0.558 | [0.527, 0.587] |
-| 3B base | 0.691 | [0.664, 0.721] |
-| 7B base | 0.793 | [0.766, 0.817] |
-| **1.5B fine-tuned** | **0.629** | [0.599, 0.659] |
+| config | tier | execution acc | 95% CI |
+|---|---|---|---|
+| 1.5B base | open | 0.558 | [0.527, 0.587] |
+| 1.5B fine-tuned | open | 0.629 | [0.599, 0.659] |
+| 3B base | open | 0.691 | [0.664, 0.721] |
+| **7B base** | open | **0.793** | [0.766, 0.817] |
+| claude-haiku-4-5 | frontier | 0.794 | [0.768, 0.819] |
+| gpt-4.1-mini | frontier | 0.811 | [0.787, 0.836] |
 
 **Findings:**
 1. **Size dominates** — 0.56 → 0.69 → 0.79, all CIs non-overlapping.
-2. **A one-epoch LoRA on the 1.5B is a significant +7 pts** (0.56→0.63), closing ~half the
+2. **Open matches frontier** — the open 7B (0.79) is statistically tied with Claude-haiku
+   (0.79) and within noise of GPT-4.1-mini (0.81). Frontier-tier text-to-SQL runs locally.
+3. **A one-epoch LoRA on the 1.5B is a significant +7 pts** (0.56→0.63), closing ~half the
    gap to a 2×-larger 3B base — the efficiency story.
-3. **Schema representation** ([ablation chart](results/schema_ablation_combined.png), n=100):
+4. **Schema representation** ([ablation chart](results/schema_ablation_combined.png), n=100):
    adding column *types* hurt execution; PK/FK keys helped exact-match; `minimal` already
    hits ~0.91 on the 7B.
-4. **Rigor caught a wrong conclusion:** at n=100 the fine-tuning effect looked flat; on full
+5. **Rigor caught a wrong conclusion:** at n=100 the fine-tuning effect looked flat; on full
    dev with CIs it's clearly positive. Small slices lie — hence the CIs.
 
 ## Run it

@@ -1,0 +1,27 @@
+{
+  "schema_style": "with_keys",
+  "rows": [
+    {
+      "label": "gpt-4.1-mini",
+      "model": "gpt-4.1-mini",
+      "frontier": true,
+      "exec": 0.8114,
+      "ci95": [
+        0.7872,
+        0.8356
+      ],
+      "n": 1034
+    },
+    {
+      "label": "claude-haiku-4-5",
+      "model": "claude-haiku-4-5",
+      "frontier": true,
+      "exec": 0.794,
+      "ci95": [
+        0.7679,
+        0.8191
+      ],
+      "n": 1034
+    }
+  ]
+}
