@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Data, datasets, model checkpoints, adapters, eval outputs (large / regenerable)
+data/*
+!data/.gitkeep
+*.sqlite
+*.db
+checkpoints/
+adapters/
+outputs/
+runs/
+wandb/
+*.safetensors
+*.gguf
+
+# Results we DO want to version are added explicitly (e.g. results/*.md, the curve PNG)
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

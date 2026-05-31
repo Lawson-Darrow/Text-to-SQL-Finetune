@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "text2sql"
+version = "0.1.0"
+description = "Fine-tune small open models for text-to-SQL; measure the accuracy/size frontier"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"  # torch+CUDA on Blackwell; avoid 3.14 wheel gaps
+dependencies = [
+    "datasets>=2.20",
+    "transformers>=4.46",
+    "peft>=0.13",
+    "trl>=0.12",
+    "accelerate>=1.0",
+    "openai>=1.40",       # frontier baselines via LLMGateway (OpenAI-compatible)
+    "python-dotenv>=1",
+    "matplotlib>=3.8",    # accuracy-vs-size curve
+]
+
+# torch (CUDA 12.8 build) and unsloth are installed out-of-band per the GPU/CUDA setup,
+# not pinned here — see SPEC "Compute & environment".
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6", "ipykernel>=6"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
