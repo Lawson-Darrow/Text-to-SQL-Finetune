@@ -1,0 +1,18 @@
+{
+  "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+  "n": 100,
+  "results": {
+    "minimal": {
+      "exact_match": 0.34,
+      "execution": 0.57
+    },
+    "with_types": {
+      "exact_match": 0.3,
+      "execution": 0.55
+    },
+    "with_keys": {
+      "exact_match": 0.28,
+      "execution": 0.6
+    }
+  }
+}
