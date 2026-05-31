@@ -81,8 +81,10 @@ The headline is an ablation across three axes, not just a size curve:
 5. **Fine-tune** — LoRA bf16 SFT; compare to base + frontier. ✅ done (1.5B, 1 epoch,
    full Spider train; exact-match 0.28→0.45 (+17), execution 0.60→0.57 flat/within-noise;
    chart in results/finetune_compare.png). Insight: SFT aligns SQL style ≠ execution gain.
-6. **Size ladder** — 1.5B/3B/7B × best schema format; the 3-axis result + CIs + per-hardness.
-7. **Writeup** — report (+ contamination caveat + held-out set), blog, featured project.
+6. **Size ladder** — base 1.5B/3B/7B + FT-1.5B on full dev (n=1034) with bootstrap CIs. ✅ done
+   (0.558 / 0.691 / 0.793 base; FT-1.5B 0.629 — significant +7pts, non-overlapping CIs;
+   curve in `results/ladder.png`). The n=100→full-dev flip showed the FT lift is real.
+7. **Writeup** — `REPORT.md` + `docs/blog-text-to-sql.md` + featured on ledarrow.dev. ✅ done.
 
 ## Success criteria
 

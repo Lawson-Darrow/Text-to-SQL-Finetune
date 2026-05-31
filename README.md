@@ -21,51 +21,43 @@ Spider (NL + schema → SQL) → LoRA/QLoRA SFT (unsloth) on 1.5B/3B/7B
     → base vs fine-tuned vs frontier (via LLMGateway) → accuracy-vs-size curve
 ```
 
-## Status
+## Results
 
-Milestone 5 — LoRA fine-tune (1.5B, 1 epoch on Spider train). Base vs fine-tuned, dev n=100:
+Full writeup: **[REPORT.md](REPORT.md)**. Narrative version: [blog post](docs/blog-text-to-sql.md).
 
-![LoRA SFT base vs fine-tuned](results/finetune_compare.png)
+**Size + fine-tuning** (full Spider dev, n=1034, execution accuracy, 95% bootstrap CI):
 
-| metric | base | fine-tuned | Δ |
-|---|---|---|---|
-| exact-match | 0.28 | 0.45 | +0.17 |
-| execution | 0.60 | 0.57 | −0.03 (within n=100 noise) |
+![accuracy vs size](results/ladder.png)
 
-Finding: SFT taught the model Spider's gold SQL *style* (exact-match +17 pts) but execution
-accuracy was flat — **exact-match and execution measure different things; matching gold style
-≠ better functional correctness.** A definitive execution comparison (full dev + bootstrap CIs)
-comes with the size ladder (M6).
-
-### Milestone 4 — schema-representation ablation
-
-![Schema representation x model size](results/schema_ablation_combined.png)
-
-Spider dev (n=100), official `test-suite-sql-eval`, execution accuracy:
-
-| schema style | 1.5B | 7B |
+| config | execution acc | 95% CI |
 |---|---|---|
-| minimal | 0.57 | 0.91 |
-| with_types | 0.55 | 0.86 |
-| with_keys | 0.60 | 0.91 |
+| 1.5B base | 0.558 | [0.527, 0.587] |
+| 3B base | 0.691 | [0.664, 0.721] |
+| 7B base | 0.793 | [0.766, 0.817] |
+| **1.5B fine-tuned** | **0.629** | [0.599, 0.659] |
 
-Findings: **(1) model size dominates** (7B ≈0.91 vs 1.5B ≈0.58). **(2) Adding column types
-consistently *hurt* execution** at both sizes. **(3) PK/FK keys** gave the best exact-match
-(7B 0.68) and tied best execution. `minimal` already reaches ~0.91 on 7B. Stack derisk (M2)
-passed on the RTX 4090 / WSL2; evaluator wired in M3. See [SPEC.md](SPEC.md) for milestones.
+**Findings:**
+1. **Size dominates** — 0.56 → 0.69 → 0.79, all CIs non-overlapping.
+2. **A one-epoch LoRA on the 1.5B is a significant +7 pts** (0.56→0.63), closing ~half the
+   gap to a 2×-larger 3B base — the efficiency story.
+3. **Schema representation** ([ablation chart](results/schema_ablation_combined.png), n=100):
+   adding column *types* hurt execution; PK/FK keys helped exact-match; `minimal` already
+   hits ~0.91 on the 7B.
+4. **Rigor caught a wrong conclusion:** at n=100 the fine-tuning effect looked flat; on full
+   dev with CIs it's clearly positive. Small slices lie — hence the CIs.
+
+## Run it
 
 ```bash
-# in WSL2: data + evaluator setup, then baseline / ablation
-bash scripts/prepare_data.sh
+bash scripts/prepare_data.sh                                    # Spider DBs + tables + evaluator (WSL2)
 PYTHONPATH=src python scripts/run_ablation.py --n 100 --model Qwen/Qwen2.5-Coder-7B-Instruct
-PYTHONPATH=src python scripts/plot_ablation.py
+PYTHONPATH=src python scripts/run_finetune.py --model Qwen/Qwen2.5-Coder-1.5B-Instruct
+PYTHONPATH=src python scripts/run_ladder.py && PYTHONPATH=src python scripts/plot_ladder.py
 ```
 
-## Setup (planned)
-
-Training runs locally on an RTX 4090 (24GB, Ada) under WSL2 Ubuntu (Python 3.11–3.12). Eval
-uses the official Spider / test-suite evaluator. See SPEC for the full stack.
+Trains locally on an RTX 4090 (24GB, Ada) under WSL2 Ubuntu (Python 3.12, env via `uv`).
+See [SPEC.md](SPEC.md) for milestones and `docs/stack_derisk.md` for the verified stack.
 
 ## License
 
-MIT (added when the repo goes public).
+MIT — see [LICENSE](LICENSE).
