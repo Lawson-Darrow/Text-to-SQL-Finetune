@@ -27,8 +27,8 @@ Milestone 1 — scaffold. See [SPEC.md](SPEC.md) for the plan and milestones.
 
 ## Setup (planned)
 
-Training runs locally on an RTX 5090 (CUDA 12.8 / torch 2.7+, Python 3.11–3.12). Eval uses
-SQLite execution against the Spider databases. See SPEC for the full stack.
+Training runs locally on an RTX 4090 (24GB, Ada) under WSL2 Ubuntu (Python 3.11–3.12). Eval
+uses the official Spider / test-suite evaluator. See SPEC for the full stack.
 
 ## License
 

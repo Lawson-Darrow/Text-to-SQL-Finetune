@@ -46,16 +46,18 @@ The headline is an ablation across three axes, not just a size curve:
 
 ## Compute & environment
 
-- **Hardware:** local **RTX 5090** (Blackwell, sm_120, 32GB). Colab Pro fallback.
-- **Run on WSL2 Ubuntu / Linux, not native Windows** — bitsandbytes/QLoRA kernels on sm_120
-  are the weak link, and the broader CUDA stack is far smoother on Linux.
-- Pin: torch (CUDA 12.8 wheel), driver, unsloth, transformers, triton, bitsandbytes. Python 3.11/3.12.
-- **MVP = LoRA bf16** (7B fits comfortably in 32GB); treat 4-bit QLoRA as a nice-to-have.
+- **Hardware:** local **RTX 4090** (Ada, sm_89, 24GB) — the machine's actual GPU. Colab Pro fallback.
+- **Run on WSL2 Ubuntu** (already set up) — smoother CUDA stack than native Windows.
+- Pin: torch (CUDA 12.x wheel), driver, unsloth, transformers, triton, bitsandbytes. Python 3.11/3.12.
+- Ada (sm_89) is mature: torch, unsloth, **and bitsandbytes/QLoRA all work** — the Blackwell
+  kernel risk does not apply here. MVP = **LoRA bf16**; QLoRA available for headroom.
+- 24GB note: 7B bf16 LoRA fits with gradient checkpointing; 1.5B/3B are comfortable; QLoRA
+  gives extra room for 7B if needed.
 
 ## Risks (from the review)
 
-- **bitsandbytes on sm_120** may lack working quantization kernels (esp. Windows) → don't bet
-  the project on QLoRA; LoRA bf16 is the safe path.
+- **24GB memory ceiling** — 7B bf16 LoRA is workable but tight; use gradient checkpointing,
+  or fall back to QLoRA (safe on Ada). 1.5B/3B have ample room.
 - **Execution accuracy is objective but not simple** — ordering, NULLs, value formatting,
   casing, float precision, duplicate rows, per-DB setup, timeouts all bite. Use the official
   evaluator and report error/invalid/timeout rates alongside accuracy.
@@ -66,9 +68,9 @@ The headline is an ablation across three axes, not just a size curve:
 ## Milestones
 
 1. **Scaffold** ✅
-2. **Stack derisk** — a pass/fail matrix (see `docs/stack_derisk.md`): torch sees `sm_120`,
+2. **Stack derisk** — a pass/fail matrix (see `docs/stack_derisk.md`): torch sees `sm_89`,
    one forward pass, one **LoRA bf16 backward** pass, one generation, one eval query against
-   the Spider evaluator; optional 4-bit load. On WSL2.
+   the Spider evaluator; QLoRA 4-bit load. On WSL2 / the 4090.
 3. **Data + eval harness** — Spider load, schema serialization (v1 format), wire the
    **official evaluator** first (before training), with the metric suite above.
 4. **Schema-representation ablation** — prompt-only / few-shot, varying schema formats, on the base 7B.
